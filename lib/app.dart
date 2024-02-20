@@ -1,17 +1,47 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
+
 import 'drawer.dart';
 import 'home_screen.dart';
 import 'calculator_screen.dart';
 import 'about_screen.dart';
 
+class ThemePreference {
+  static const String key = "theme";
+
+  Future<bool> getTheme() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(key) ?? false;
+  }
+
+  Future<void> setTheme(bool isDark) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool(key, isDark);
+  }
+}
+
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: MyHomePage(),
+    return FutureBuilder(
+      future: ThemePreference().getTheme(),
+      builder: (context, snapshot) {
+        bool isDarkMode = snapshot.data ?? false;
+        return MaterialApp(
+          theme: ThemeData.light(),
+          darkTheme: ThemeData.dark(),
+          themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
+          home: MyHomePage(),
+        );
+      },
     );
   }
 }
+
+
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -56,6 +86,13 @@ class _MyHomePageState extends State<MyHomePage> {
           });
         },
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          _toggleTheme();
+        },
+        tooltip: 'Toggle Theme',
+        child: Icon(Icons.brightness_6),
+      ),
     );
   }
 
@@ -71,4 +108,17 @@ class _MyHomePageState extends State<MyHomePage> {
         return Container();
     }
   }
+
+ void _toggleTheme() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  int currentThemeIndex = prefs.getInt(ThemePreference.key) ?? 0;
+  int nextThemeIndex = (currentThemeIndex + 1) % 3; // Assuming you have 3 themes
+
+  prefs.setInt(ThemePreference.key, nextThemeIndex);
+
+  setState(() {
+    // Rebuild the widget tree to reflect the theme change
+  });
+}
+
 }

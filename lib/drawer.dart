@@ -1,7 +1,11 @@
 // my_drawer.dart
 import 'package:flutter/material.dart';
-import 'package:tabnavigationbar/about_screen.dart';
+// import 'package:tabnavigationbar/about_screen.dart';
 import 'package:tabnavigationbar/settings_screen.dart';
+import 'package:tabnavigationbar/signin_screen.dart';
+import 'package:tabnavigationbar/signup_screen.dart';
+// import 'package:connectivity_plus/connectivity_plus.dart';
+
 
 class MyDrawer extends StatelessWidget {
   final Function(int) onItemTap;
@@ -59,10 +63,32 @@ class MyDrawer extends StatelessWidget {
             leading: Icon(Icons.settings),
             title: Text('Settings'),
             onTap: () {
-              // Navigator.pop(context); // Close the drawer
-              // Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsScreen()));
+              Navigator.pop(context); // Close the drawer
+              Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsScreen()));
             },
-          )
+          ),
+          // In MyDrawer widget
+ListTile(
+  leading: Icon(Icons.account_circle),
+  title: Text('Sign Up'),
+  onTap: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => SignUpScreen()),
+    );
+  },
+),
+ListTile(
+  leading: Icon(Icons.login),
+  title: Text('Sign In'),
+  onTap: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => SignInScreen()),
+    );
+  },
+),
+
         ],
       ),
     );

@@ -1,5 +1,50 @@
 import 'package:flutter/material.dart';
-import 'drawer.dart'; 
+import 'package:connectivity_plus/connectivity_plus.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    _initConnectivity(context); // Initialize connectivity
+
+    return MaterialApp(
+      theme: ThemeData.light(),
+      darkTheme: ThemeData.dark(),
+      home: NewsScreen(), // Replace with the desired starting screen
+    );
+  }
+
+  void _initConnectivity(BuildContext context) {
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      if (result == ConnectivityResult.none) {
+        _showOfflineAlert(context);
+      }
+    });
+  }
+
+  void _showOfflineAlert(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Offline'),
+          content: Text('You are currently offline. Please check your internet connection.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
 
 class NewsScreen extends StatelessWidget {
   @override
@@ -8,39 +53,9 @@ class NewsScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('News'),
       ),
-      drawer: MyDrawer(
-        onItemTap: (index) {
-          handleNavigation(index, context);
-        },
-      ),
       body: Center(
         child: Text('News Screen Content'),
       ),
     );
-  }
-
-  void handleNavigation(int index, BuildContext context) {
-    // Handle navigation based on the selected index
-    switch (index) {
-      case 0:
-        Navigator.pop(context); // Close the drawer
-        Navigator.pushNamed(context, '/home');
-        break;
-      case 1:
-        Navigator.pop(context); // Close the drawer
-        Navigator.pushNamed(context, '/about');
-        break;
-      case 2:
-        Navigator.pop(context); // Close the drawer
-        Navigator.pushNamed(context, '/calculator');
-        break;
-      case 3:
-        // Stay on the current screen (NewsScreen)
-        break;
-      case 4:
-        Navigator.pop(context); // Close the drawer
-        Navigator.pushNamed(context, '/settings');
-        break;
-    }
   }
 }
